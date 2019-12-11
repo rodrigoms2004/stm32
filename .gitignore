@@ -1,0 +1,5 @@
+*.zip
+*.tar.bz2
+src/stm32/libopencm3s
+src/stm32/rtos/FreeRTOSv10.2.1
+saved.img
