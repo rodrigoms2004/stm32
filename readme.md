@@ -204,10 +204,11 @@ uint16_t gpio_get(uint32_t gpioport, uint16_t gpios);
 void gpio_toggle(uint32_t gpioport, uint16_t gpios);
 uint16_t gpio_port_read(uint32_t gpioport);
 void gpio_port_write(uint32_t gpioport, uint16_t data);
-void gpio_port_config_log(uint32_t gpioport, uint16_t gpios);
+void gpio_port_config_lock(uint32_t gpioport, uint16_t gpios);
 ```
 The gpioport argument can be one of the macros:
 
+**Table: libopencm3 GPIO Macros for STM32F103C8T6**
 Port Macro|Description
 ----------|-----------
 GPIOA|GPIO port A
@@ -216,6 +217,7 @@ GPIOC|GPIO port C
 
 In the libopencm3 GPIO functions, one or more GPIO bits may be st or cleared at once. Table below shoes supported macros. Note also the macro named GPIO_ALL.
 
+**Table: libopencm3 GPIO pin designation macros**
 Pin Macro|Definition|Description
 ---------|----------|-----------
 GPIO0|(1 << 0)|Bit 0
@@ -234,4 +236,76 @@ GPIO12|(1 << 12)|Bit 12
 GPIO13|(1 << 13)|Bit 13
 GPIO14|(1 << 14)|Bit 14
 GPIO15|(1 << 15)|Bit 15
-GPIO_ALL|0xffff|All bits 0 through 15
+GPIO_ALL|0xFFFF|All bits 0 through 15
+
+**OBS:** take a look in *src/playground/bitwise_shift_left.c* code. 0xFFFF is 65535 in decimal
+
+
+Example:
+
+```
+gpio_cleat(PORTB, GPIO_ALL); // clear all PORTB pins
+```
+
+To lock GPIO I/O definition:
+
+```
+void gpio_port_config_lock(uint32_t gpioport, uint16_t gpios);
+```
+
+After calling it on selected port, the I/O configuration is frozen until the next system reset.  Very useful for safety-critical systems where you don't want an errant program to change these. When a selected GPIO is made an input or an output, it is guaranteed to remain so.
+
+### GPIO Configuration 
+
+Enable clock for the peripheral or GPIO works
+```
+rcc_periph_clock_enable(RCC_GPIOC);
+```
+
+You can disable clock on power consuption.
+
+**TIP:** It you peripheral or GPIO is not working, check it the necessary clocks are enabled
+
+#### For gpio_set_mode()
+
+```
+gpio_set_mode(
+  GPIOC,
+  GPIO_MODE_OUTPUT_2_MHZ,      
+  GPIO_CNF_OUTPUT_PUSHPULL,
+  GPIO13
+);
+```
+**GPIO port**
+
+See table *libopencm3 GPIO Macros for STM32F103C8T6*
+
+
+**GPIO Mode Definitions**
+
+Mode Macro Name|Value|Description
+---------------|-----|-----------
+GPIO_MODE_INPUT|0x00|Input mode
+GPIO_MODE_OUTPUT_2_MHZ|0x02|Output mode, at 2MHz
+GPIO_MODE_OUTPUT_10_MHZ|0x01|Output mode, at 10MHz
+GPIO_MODE_OUTPUT_50_MHZ|0x03|Output mode, at 50MHz
+
+**I/O Configuration Specializing Macros**
+
+Specialization Macro Name|Value|Description
+-------------------------|-----|-----------
+GPIO_CNF_INPUT_ANALOG|0x00|Analog input mode
+GPIO_CNF_INPUT_FLOAT|0x01|Digital input, floating (default)
+GPIO_CNF_INPUT_PULL_UPDOWN|0x02|Digital input, pull up and down
+GPIO_CNF_OUTPUT_PUSHPULL|0x00|Digital output, push/pull
+GPIO_CNF_OUTPUT_OPENDRAIN|0x01|Digital output, open drain
+GPIO_CNF_OUTPUT_ALTFN_PUSHPULL|0x02|Alternate function output, push/pull
+GPIO_CNF_OUTPUT_ALTFN_OPENDRAIN|0x03|Alternate function output, open drain
+
+
+**GPIO Pin**
+
+See table *libopencm3 GPIO pin designation macros*
+
+
+
