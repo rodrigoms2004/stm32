@@ -2,14 +2,16 @@
 
 [Book Source Code](https://github.com/Apress/Beg-STM32-Devel-FreeRTOS-libopencm3-GCC)
 
-### Chapter 01 - Introduction
+[STM32 Nucleo](https://os.mbed.com/platforms/ST-Nucleo-L031K6/)
+
+## Chapter 01 - Introduction
 [Stewart Watkiss website](http://www.penguintutor.com/)
 
 [FreeRTOS](https://freertos.org/)
 
 [LibOpenCM3](https://libopencm3.org/)
 
-### Chapter 02 - Software setup
+## Chapter 02 - Software setup
 
 https://developer.arm.com/
 
@@ -38,7 +40,7 @@ vim ~/.bashrc
 source ~/.bashrc 
 ```
 
-#### Installing st-flash
+### Installing st-flash
 
 **Install it before libs**
 ```
@@ -82,20 +84,20 @@ v1.5.1-50-g3690de9
 ```
 st-info --probe
 Found 1 stlink programmers
- serial: 303636434646353235313439373837383637313934343239
-openocd: "\x30\x36\x36\x43\x46\x46\x35\x32\x35\x31\x34\x39\x37\x38\x37\x38\x36\x37\x31\x39\x34\x34\x32\x39"
-  flash: 262144 (pagesize: 2048)
-   sram: 49152
- chipid: 0x0435
-  descr: L43x/L44x device
+ serial: 2d3f0f0029135147324d4e00
+openocd: "\x2d\x3f\x0f\x00\x29\x13\x51\x47\x32\x4d\x4e\x00"
+  flash: 65536 (pagesize: 1024)
+   sram: 20480
+ chipid: 0x0410
+  descr: F1 Medium-density device
 ```
 
-### Chapter 3 Power Up and Blink
+## Chapter 3 Power Up and Blink
 
 
 **Read**
 
-Reads device's flash memory starting at address 0x8000000, and saves 0x1000 (4K) worth datato a file named saved.img
+Reads device's flash memory starting at address 0x8000000, and saves 0x1000 (4K) worth data to a file named saved.img
 
 ```
 st-flash read ./saved.img 0x8000000 0x1000
@@ -142,5 +144,72 @@ st-flash erase
 ```
 
 
-### Chapter 4 - GPIO
+## Chapter 4 - GPIO
 
+General Purpose Input/Output
+
+### Building miniblink
+
+Compile it
+
+```
+cd src/stm32/miniblink
+make
+```
+
+Force rebuilding
+```
+make clobber
+make
+```
+
+### Flashing miniblink
+
+```
+make flash
+```
+
+### Code
+
+```
+gpio_clear(GPIOC,GPIO13);	/* LED on */
+...
+gpio_set(GPIOC,GPIO13);		/* LED off */
+```
+
+In Arduino environment
+
+```
+int ledPin = 13; // LED on digital pin 13
+digitalWrite(ledPin, HIGH);
+...
+digitalWrite(ledPin, LOW);
+```
+
+### GPIO API
+
+Include libopencm3 headers
+
+```
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
+```
+
+The rcc.h file is needed for definitions so as to enable the GPIO clock. The gpio.h file is necessary for the remainder:
+
+```
+void gpio_set(uint32_t gpioport, uint16_t gpios);
+void gpio_clear(uint32_t gpioport, uint16_t gpios);
+uint16_t gpio_get(uint32_t gpioport, uint16_t gpios);
+void gpio_toggle(uint32_t gpioport, uint16_t gpios);
+uint16_t gpio_port_read(uint32_t gpioport);
+void gpio_port_write(uint32_t gpioport, uint16_t data);
+void gpio_port_config_log(uint32_t gpioport, uint16_t gpios);
+```
+The gpioport argument can be one of the macros:
+
+Port Macro|Description
+----------|-----------
+GPIOA|GPIO port A
+GPIOB|GPIO port B
+GPIOC|GPIO port C
