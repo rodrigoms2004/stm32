@@ -213,3 +213,25 @@ Port Macro|Description
 GPIOA|GPIO port A
 GPIOB|GPIO port B
 GPIOC|GPIO port C
+
+In the libopencm3 GPIO functions, one or more GPIO bits may be st or cleared at once. Table below shoes supported macros. Note also the macro named GPIO_ALL.
+
+Pin Macro|Definition|Description
+---------|----------|-----------
+GPIO0|(1 << 0)|Bit 0
+GPIO1|(1 << 1)|Bit 1
+GPIO2|(1 << 2)|Bit 2
+GPIO3|(1 << 3)|Bit 3
+GPIO4|(1 << 4)|Bit 4
+GPIO5|(1 << 5)|Bit 5
+GPIO0|(1 << 0)|Bit 0
+GPIO7|(1 << 7)|Bit 7
+GPIO8|(1 << 8)|Bit 8
+GPIO9|(1 << 9)|Bit 9
+GPIO10|(1 << 10)|Bit 10
+GPIO11|(1 << 11)|Bit 11
+GPIO12|(1 << 12)|Bit 12
+GPIO13|(1 << 13)|Bit 13
+GPIO14|(1 << 14)|Bit 14
+GPIO15|(1 << 15)|Bit 15
+GPIO_ALL|0xffff|All bits 0 through 15
